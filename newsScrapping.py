@@ -10,6 +10,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import accuracy_score
+import os
 
 nltk.download('stopwords')
 nltk.download('wordnet')
@@ -84,6 +85,13 @@ def scrape_headlines():
     
     return headlines
 
+# Function to save headlines to files based on their predicted categories
+def save_headlines_to_files(headlines, predicted_categories):
+    for headline, category in zip(headlines, predicted_categories):
+        filename = f"{category.lower()}.txt"
+        with open(filename, 'a') as file:
+            file.write(headline + '\n')
+
 # Main function to run the Streamlit app
 def main():
     # App title and developer info
@@ -117,6 +125,9 @@ def main():
                 prediction = model.predict([preprocessed_headline])[0]
                 predicted_category = map_label_to_category(prediction)
                 predicted_categories.append(predicted_category)
+            
+            # Save the headlines to files based on their predicted categories
+            save_headlines_to_files(headlines, predicted_categories)
             
             # Display prediction results
             st.success("🎉 Predicted Categories: 🎉")
